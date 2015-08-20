@@ -1,0 +1,175 @@
+1.mkdir [选项] 目录名  http://www.cnblogs.com/peida/archive/2012/10/25/2738271.html
+-m, --mode=模式，设定权限<模式> (类似 chmod)，而不是 rwxrwxrwx 减 umask
+-p, --parents  可以是一个路径名称。此时若路径中的某些目录尚不存在,加上此选项后,系统将自动建立好那些尚不存在的目录,即一次可以建立多个目录; 
+-v, --verbose  每次创建新目录都显示信息
+    --help     显示此帮助信息并退出
+    --version  输出版本信息并退出
+示例：mkdir test1    创建一个空目录
+      mkdir -p test2/test22  递归创建多个目录
+      mkdir -m 777 test3   创建权限为777的目录 
+      mkdir -v test4    创建新目录都显示信息
+      mkdir -vp scf/{lib/,bin/,doc/{info,product},logs/{info,product},service/deploy/{info,product}}  一个命令创建项目的目录结构
+
+2.tree命令  http://www.cnblogs.com/ma6174/archive/2012/02/13/2348617.html
+[root@localhost test]# tree scf/
+scf/
+|-- bin
+|-- doc
+|   |-- info
+|   `-- product
+|-- lib
+|-- logs
+|   |-- info
+|   `-- product
+`-- service
+   	 	`-- deploy
+  	    	|-- info
+        	`-- product
+12 directories, 0 files
+
+3.rm    http://www.cnblogs.com/peida/archive/2012/10/26/2740521.html
+     功能为删除一个目录中的一个或多个文件或目录，它也可以将某个目录及其下的所有文件及子目录均删除。
+     对于链接文件，只是删除了链接，原有文件均保持不变。
+     -f, --force    忽略不存在的文件，从不给出提示。
+     -i, --interactive 进行交互式删除
+     -r, -R, --recursive   指示rm将参数中列出的全部目录和子目录均递归地删除。
+     -v, --verbose    详细显示进行的步骤
+     --help     显示此帮助信息并退出
+     --version  输出版本信息并退出
+示例：
+    rm 文件名     删除文件file，系统会先询问是否删除。
+    rm -f log1.log   强行删除file，系统不再提示。 
+    rm -i *.log    删除任何.log文件；删除前逐一询问确认
+    rm -r test1    将 test1子目录及子目录中所有档案删除
+    rm -rf  test2  rm -rf test2命令会将 test2 子目录及子目录中所有档案删除,并且不用一一确认
+    rm -- -f       删除以 -f 开头的文件
+    
+4.touch [选项]... 文件...
+    http://www.cnblogs.com/peida/archive/2012/10/30/2745714.html
+    修改文件时间戳，或者新建一个不存在的文件。
+    -a   或--time=atime或--time=access或--time=use 　只更改存取时间。
+    -c   或--no-create 　不建立任何文档。
+    -d 　使用指定的日期时间，而非现在的时间。
+    -f 　此参数将忽略不予处理，仅负责解决BSD版本touch指令的兼容性问题。
+    -m   或--time=mtime或--time=modify 　只更改变动时间。
+    -r 　把指定文档或目录的日期时间，统统设成和参考文档或目录的日期时间相同。
+    -t 　使用指定的日期时间，而非现在的时间。
+示例：
+     touch log2012.log log2013.log     创建不存在的文件
+     touch -c log2014.log              如果log2014.log不存在，则不创建文件
+     touch -r log.log log2012.log      更新log.log的时间和log2012.log时间戳相同
+     touch -t 201211142234.50 log.log   设定文件的时间戳为2012-11-14 
+     
+5.cp命令   http://www.cnblogs.com/peida/archive/2012/10/29/2744185.html
+cp [选项]... [-T] 源 目的
+cp [选项]... 源... 目录
+         -a, --archive        等于-dR --preserve=all
+         --backup[=CONTROL    为每个已存在的目标文件创建备份
+         -b                   类似--backup 但不接受参数
+         --copy-contents      在递归处理是复制特殊文件内容
+         -d                   等于--no-dereference --preserve=links
+         -f, --force          如果目标文件无法打开则将其移除并重试(当 -n 选项存在时则不需再选此项
+         -i, --interactive    覆盖前询问(使前面的 -n 选项失效)
+         -H                   跟随源文件中的命令行符号链接
+         -l, --link           链接文件而不复制
+         -L, --dereference    总是跟随符号链接
+         -n, --no-clobber     不要覆盖已存在的文件(使前面的 -i 选项失效)
+         -P, --no-dereference   不跟随源文件中的符号链接
+         -p                   等于--preserve=模式,所有权,时间戳
+         --preserve[=属性列表   保持指定的属性(默认：模式,所有权,时间戳)，如果可能保持附加属性：环境、链接、xattr 等
+         -R, -r, --recursive  复制目录及目录内的所有项目
+示例：
+     cp log.log test5    复制单个文件到目标目录，文件在目标文件中不存在，目标文件存在时，会询问是否覆盖
+     cp -a test3 test5    复制整个目录（目标目录test5存在和不存在，结果有区别）   在没有带-a参数时，两个文件的时间是不一样的。在带了-a参数时，两个文件的时间是一致的
+          
+6.chmod   http://www.cnblogs.com/peida/archive/2012/11/29/2794010.html    
+  chmod [-cfvR] [--help] [--version] mode file
+    -c 当发生改变时，报告处理信息
+		-f 错误信息不输出
+		-R 处理指定目录以及其子目录下的所有文件
+		-v 运行时显示详细处理信息
+    --reference=<目录或者文件> 设置成具有指定目录或者文件具有相同的权限
+		--version 显示版本信息
+		<权限范围>+<权限设置> 使权限范围内的目录或者文件具有指定的权限
+		<权限范围>-<权限设置> 删除权限范围的目录或者文件的指定权限
+		<权限范围>=<权限设置> 设置权限范围内的目录或者文件的权限为指定的值
+权限范围：
+		u ：目录或者文件的当前的用户
+		g ：目录或者文件的当前的群组
+		o ：除了目录或者文件的当前用户或群组之外的用户或者群组
+		a ：所有的用户及群组
+
+权限代号：
+		r ：读权限，用数字4表示
+		w ：写权限，用数字2表示
+		x ：执行权限，用数字1表示
+		- ：删除权限，用数字0表示
+		s ：特殊权限 
+		
+		1）. 文字设定法:
+　　	chmod ［who］ ［+ | - | =］ ［mode］ 文件名
+　　2）. 数字设定法
+      chmod ［mode］ 文件名
+示例：
+    chmod a+x log2012.log         增加文件所有用户组可执行权限
+    chmod ug+w,o-x log2012.log    同时修改不同用户权限 ，即设定文件text的属性为：文件属主（u） 增加写权限;与文件属主同组用户（g） 增加写权限;其他用户（o） 删除执行权限
+    chmod a-x log2012.log         删除文件权限，删除所有用户的可执行权限 
+    chmod u=x log2012.log         使用“=”设置权限 ，撤销原来所有的权限，然后使拥有者具有可读权限
+    chmod -R u+x test4            对一个目录及其子目录所有文件添加权限 ，递归地给test4目录下所有文件和子目录的属主分配权限 
+
+7.pwd命令用于显示当前目录
+8.ls -ah 可以看隐藏的文件和目录
+9.mv  移动或重命名
+    $ mv /usr/xu/ * .             将/usr/xu中的所有文件移到当前目录（用“.”表示）中：
+    $ mv wch.txt wjz.doc          将wch.txt重命名为wjz.doc
+    
+10.cp
+    $ cp - r /usr/xu/ /usr/liu/   将/usr/xu目录中的所有文件及其子目录拷贝到目录/usr/liu中。
+    $ cp - i exam1.c /usr/wang/shiyan1.c       将文件exam1.c拷贝到/usr/wang 这个目录下，并改名为 shiyan1.c。
+    $ cp exam1.c /usr/ wang/      复制但不改名
+    
+11.man Command    //查询Command的用法
+
+12.find . -name "*.java"  //用于查找当前目录下所有扩展名为java的文件
+   find 用于查找目录或者文件.可以嵌套，内部find包含在``中（不是单引号，是英文键盘中1左边键盘上的符号）
+   find `find . -name res` -name "*.xml" | xargs grep status_bar_size  
+   //找出当前目录下子目录名称为res下的所有.xml文件，并列出这些文件中包含status_bar_size字符串的地方 
+13.grep "Activity" hello.java       //找出hello.java文件中所有包含Activity字符串的地方
+   grep 用于查找文件中指定字符串
+   
+14. | 表示多管道执行，后面的命令把前面命令的输出结果作为后面命令的参数
+    xargs  代表上一个命令的执行结果，并作为下一个命令的参数
+    find . -name "*.java" | xargs grep "Activity"   //找出当前目录下所有包含Activity字符串的java文件
+
+15.cat  查看并在terminal中显示文件内容
+
+16.ps 列出当前运行的所有进程（有pid号）
+   kill -9 pid 杀死指定进程
+   
+17.export 将某变量值的作用域设为全局
+@1/将某路径赋值给环境变量PATH,然后export PATH,则其他程序可用该路径
+@2/export PS1=XXX      //PS1代表当前terminal，XXX可用于替代终端中冗长的提示符root@vip-thinkstation-500:~$
+
+18.脚本：script，“剧本”，不需要编译的语言，程序运行的流程，需要解释器来解释执行
+@1/bash脚本文件以 .sh为扩展名
+@2/写一个脚本文件me.sh 如下：
+   #!/bin/bash                                 //bash脚本的首句必须这么写，表示让操作系统选择Bash来解释执行脚本文件
+                                                  如果是Perl脚本，首句为 #!/bin/perl
+   echo "hello bash"  #display one message      //之后的#表示注释，echo是一个linux命令,执行后会输出后面的字符串
+   echo $1                                      //$n表示用户输入的第n个参数，参数以空格或者tab键分割
+   echo $2
+   echo $3  $4              
+@3/保存后chmod a+x me添加执行权限，然后./me I love you too 执行即可，输出如下：
+   hello bash
+   I
+   love
+   you too
+@4/脚本中变量都是字符串，没有其他类型
+   #!/bin/bash     
+   A=b               //定义后可以直接赋值,但不能有空格
+   All=all 
+   echo $All         // 引用时须在变量前面加$符号   执行后输出all
+   echo "$A"ll     //可以用双引号避免混淆         执行后输出bll
+@5/
+
+

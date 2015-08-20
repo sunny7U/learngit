@@ -1,0 +1,137 @@
+Linux平台下Android开发环境的搭建
+1、java sdk安装
+@1、下载
+在http://www.oracle.com/us/sun下面下载jdk-6u21-linux-i586.bin（版本可能要变）
+下载的时候会提供rpm版本和bin版本，rpm是redhat定义的包管理标准，在Ubuntu下不好使用，最好下载bin
+@2、运行
+mars@ubuntu:~/Downloads$./jdk-6u21-linux-i586.bin    //一般在网页上直接下载的东西都会存在用户的宿主目录下的Downloads目录下
+@3、配置环境变量
+mars@ubuntu:~/Downloads$  cd /etc
+mars@ubuntu:/etc$ ls -l |grep profile   //etc下面的profile里面包含了环境变量的配置
+mars@ubuntu:/etc$ sudo vim profile         //可能需要输入用户mars的登录密码
+添加：export:JAVA_HOME=/home/mars/Downloads/jdk1.6.0.21      //jdk的路径
+      export:PATH=$PATH:$JAVA_HOME/bin:其他路径         //Linux中环境变量之间用冒号分隔 
+      export:CLASSPATH=.
+保存退出 
+mars@ubuntu:/etc$ java -version   //可以查看java版本号
+mars@ubuntu:/etc$ which java      //可以查看java是放在哪个目录下的
+
+2、Android SDK安装
+@1、下载android-sdk-linux_x86，解压缩
+@2、进入android-sdk-linux_x86文件夹,打开tools文件夹，找到android文件
+android文件是一个shell脚本文件，双击直接运行，开始下载不同版本的sdk
+@3、进入/android-sdk-linux_x86/platforms,查看是否有下载好的sdk
+
+@4、配置环境变量
+mars@ubuntu:/etc$ sudo vim profile            //继续编辑/etc/profile
+添加： export:PATH=$PATH:$JAVA_HOME/bin:/home/mars/tools/android-sdk-linux_x86/tools
+保存退出
+mars@ubuntu:/etc$ adb 或者 which adb  //验证adb命令是否可用或者定位adb工具所在位置
+
+3、eclipse     
+@1、在http://www.eclipse.org/downloads/选择Eclipse IDE for Java Developers
+下载后解压缩到eclipse文件夹，进入eclipse，双击eclipse文件执行即可
+@2、打开eclipse后点击Windows-->preferences-->Android配置SDK目录
+
+
+Android基础知识
+1、整个Android被分为四层：
+Applications:我们通常开发的应用都在最顶层，向下逐层调用
+Application Framework：最基本的API
+Libraries (主要是C/C++库）/android runtime
+Linux Kernel:主要是驱动（Driver)和管理(Management)
+
+2、Android四大组建
+Activity： 程序界面，负责程序中的数据展示
+Intent:负责应用程序中数据的传输
+Service:在后台实现处理、服务支持的
+Content Provider:负责存储数据，并允许有需要的应用程序访问数据
+
+3、ADT(Android Development Tools)是一个eclipse的插件，里面可以设置sdk路径
+SDK(Software Development Kit)： 一般是一些被软件工程师用于为特定的软件包、软件框架、硬件平台、操作系统等建立应用软件的开发工具的集合。
+
+4、创建应用
+Build Target 选择的小能使得应用在更多版本的系统上适用，Min SDK Version就是能兼容的最低版本
+项目目录结构：
+|--src:我们编写的原文件
+|--gen:eclipse生成的R文件
+|--Android 1.6：Android提供的jar文件，包含所有我们所引用的类
+|--assets:可以放置任何项目所需要的文件，不会再R文件中生成ID
+|--res:存放资源文件，所有资源都会在R文件中生成相对应的ID
+    |---drawable-hdpi:高分辨率的图片
+    |---drawable-ldpi：低分辨率的图片
+    |---drawable-mdpi:中分辨率
+|--AndroidManifest.xml       
+            //<manifest  >
+                   package="包名"
+                   android:versionCode="版本号"
+                   android:versionName="版本名"
+                 <application  android:icon="@drawable/应用图标" android:label="应用名称/标签">
+                      <activity android:label="一个页面上的标签" android:name=".MainActivity">
+                                          |---Activity页面上ActionBar上显示的名字      |---类名，和包名一起组成应用唯一标识"."不能忘。
+                            <intentfilter>                                              
+                               <action android:name="android.intent.action.MAIN"/>           //只要intentfilter中有这两句，则
+                               <category android:name="android.intent.category.LAUNCHER"/>     这个activity就是应用程序启动时默认最先运行的activity
+                            </intentfilter>
+                      </activity>
+                 </application>
+                 <uses-sdk android:minSdkVersion="能兼容的sdk最低版本"/>
+              </manifest>
+                               
+5、Activity初步
+@1、一个Activity就是一个类，必须继承android.app.Activity包中的Activity
+@2、每个activity都必须要复写onCreate方法，activity第一次运行的时候会调用此方法
+    复写方法：在文件中右键--->source--->Override/Implement Methods-->选择要复写的方法
+    protected void onCreate（Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);    //显示布局文件
+        }
+    
+@3、每个activity都必须要在AndroidMenifest中的application节点中注册
+@4、要为activity创建xml布局文件并添加必要的控件（在layout中相应的xml文件中添加）
+@5、在activity中用findViewById(R.id.xxx)，返回View类型，需要强制类型转换为控件对应类型，例如
+    Button bt=(Button)findViewById(R.id.bt);
+    bt.setText("xxx");    //View控件可以设置控件上显示的字符
+    
+@6、多个activity之间通信，Activity01调用startActivity（Intent intent)跳转到Activity02
+    intent对象决定跳转到哪个Activity（Component name)，跳转过去做什么(Action)
+    
+    
+6、Intent意图，请求
+@1、一个Intent对象包含了一组信息：
+    Component name:决定要启动/操作的组件
+    Action：被启动的组件要执行的动作
+    Data：组件之间传递的数据
+    Category
+    Extras：KeyValues键值对，也是要传递的数据
+    Flags
+@2、Activity之间的跳转
+   在Activity01中：
+     Intent intent=new Intent();              |---要请求的类
+     intent.setClass(Activity01.this  , Activity02.class); //从Activity01跳转到Activity02
+                         |--当前类的context对象
+     Activity01.this.startActivity(intent);              
+@3、数据传递
+   在Activity01中发送数据
+     intent.putExtra( "key" , value );   //在intent对象中加入键值对
+   在Activity02中取得数据(onCreate中）
+     Intent intent=getIntent（）；   //得到传递过来的intent对象
+     String value=intent.getStringExtra("key");  //通过key获取相应的value
+     myTextView.setText(value);   //把获取的value显示出来
+@4、intent可以在不同应用之间传递数据，比如说调用短信发送程序
+   在Activity01中
+   Uri uri=Uri.parse("smsto://110");
+   Intent intent=new Intent(Intent.ACTION_SENDTO,uri);
+   intent.putExtra("sms_body","The SMS text");
+   startActivity(intent);
+
+7、监听器
+@1、内部类， class mbt implement OnClickListener,然后复写public void onClick(View v){}
+    同时在onCreate中给Button对象捆绑监听器：Button myButton.setOnClickListener(new mbt());
+    
+
+8、layout的XML文件
+LinearLayout中orientation是设置子控件依次排列的方向，horizontal水平，vertical垂直
+layout_width="fill_parent"表示宽度填满父控件，wrap_content表示包裹内容
+
+
